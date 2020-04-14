@@ -63,23 +63,28 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
-        // 60-secibd okat clock
+        // game over flag
+        this.gameOver = false;
+        // 60-second play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(60000, () => {
             this.add.text(game.config.width / 2, game.config.height / 2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width / 2, game.config.height / 2 + 64, '(F)ire to Restart', scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
         }, null, this);
     }
 
     update() {
         // scroll tile sprite
         this.starfield.tilePositionX -= 4;
-        // update rocket sprite
-        this.p1Rocket.update();
-        // update spaceships (x3)
-        this.ship01.update();
-        this.ship02.update();
-        this.ship03.update();
+        if (!this.gameOver) {
+            // update rocket sprite
+            this.p1Rocket.update();
+            // update spaceships (x3)
+            this.ship01.update();
+            this.ship02.update();
+            this.ship03.update();
+        }
         // check collisions
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
             console.log('kaboom ship 03');
@@ -96,6 +101,7 @@ class Play extends Phaser.Scene {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
         }
+
     }
 
     checkCollision(rocket, ship) {
